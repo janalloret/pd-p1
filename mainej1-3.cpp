@@ -1,7 +1,26 @@
 #include <Arduino.h>
+#define GPIO_OUT_REG   0x3FF44004  // Registro de salida de GPIO
+#define GPIO_IN_REG    0x3FF44000  // Registro de entrada de GPIO
+#define GPIO_ENABLE_REG 0x3FF44008 // Registro de habilitación de GPIO
+
+#define GPIO2 (1 << 2)    // Pin GPIO2 para salida (LED)
+#define GPIO15 (1 << 15)  // Pin GPIO15 para entrada (botón)
+
 
 // Definir el pin donde está conectado el LED
 int led = 2;  // GPIO2 en la mayoría de las placas ESP32
+
+// Configurar el pin GPIO para salida
+void setupPinAsOutput(int pin) {
+  volatile uint32_t *gpio_enable = (uint32_t *)GPIO_ENABLE_REG;
+  *gpio_enable |= pin;  // Habilitar el pin como salida
+}
+
+// Configurar el pin GPIO para entrada
+void setupPinAsInput(int pin) {
+  volatile uint32_t *gpio_enable = (uint32_t *)GPIO_ENABLE_REG;
+  *gpio_enable &= ~pin;  // Habilitar el pin como entrada
+}
 
 // La función setup se ejecuta una vez al inicio:
 void setup() {
